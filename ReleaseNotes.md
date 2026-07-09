@@ -1,5 +1,10 @@
 # Release Notes — Upwind Catalog Loader
 
+## v1.1.1
+
+### Fixes
+- **Critical: inventory asset columns were never actually populated.** Found and confirmed via a real end-to-end validation loop (live Upwind demo org, live Azure DCR, live Log Analytics query) — the `Custom-UpwindCatalogAssets_CL` DCR stream declared columns using the destination table's PascalCase names with a pure passthrough transform, while the Upwind API and this connector's own client send snake_case field names. Every real field (`AssetId`, `Category`, `CloudProvider`, all risk fields, etc.) silently landed as null; only `TimeGenerated` ever had a value. **This has been broken since the v1.0.0 initial release** — verified by inspecting git history — affecting 100% of ingested inventory asset rows for every existing install. Fixed by declaring the stream in the raw snake_case shape and adding an explicit `transformKql` that renames every field into the documented table schema. Re-validated against a live Upwind demo org after the fix: `AssetId`, `AssetName`, `Category`, `CloudProvider`, `ResourceType`, `CloudResourceId`, `SubCategory` now populate correctly.
+
 ## v1.1.0
 
 ### Features
