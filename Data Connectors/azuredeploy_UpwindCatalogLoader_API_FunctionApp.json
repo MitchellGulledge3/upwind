@@ -332,28 +332,27 @@
                 "streamDeclarations": {
                     "Custom-UpwindCatalogAssets_CL": {
                         "columns": [
-                            { "name": "TimeGenerated",          "type": "datetime" },
-                            { "name": "AssetId",                "type": "string" },
-                            { "name": "Category",               "type": "string" },
-                            { "name": "SubCategory",            "type": "string" },
-                            { "name": "CloudProvider",          "type": "string" },
-                            { "name": "CloudAccountId",         "type": "string" },
-                            { "name": "ResourceType",           "type": "string" },
-                            { "name": "CloudResourceId",        "type": "string" },
-                            { "name": "Region",                 "type": "string" },
-                            { "name": "AssetName",              "type": "string" },
-                            { "name": "ProtectedBy",            "type": "string" },
-                            { "name": "Status",                 "type": "string" },
-                            { "name": "Tags",                   "type": "dynamic" },
-                            { "name": "NetworkRisk",            "type": "dynamic" },
-                            { "name": "DetectionRisk",          "type": "dynamic" },
-                            { "name": "VulnerabilityRisk",      "type": "dynamic" },
-                            { "name": "HighPrivilegeRisk",      "type": "dynamic" },
-                            { "name": "Technologies",           "type": "dynamic" },
-                            { "name": "PublicIpAddresses",      "type": "dynamic" },
-                            { "name": "PrivateIpAddresses",     "type": "dynamic" },
-                            { "name": "SensitiveDataAtRest",    "type": "dynamic" },
-                            { "name": "SensitiveDataInTransit", "type": "dynamic" }
+                            { "name": "id",                       "type": "string" },
+                            { "name": "name",                     "type": "string" },
+                            { "name": "category",                 "type": "string" },
+                            { "name": "sub_category",              "type": "string" },
+                            { "name": "cloud_provider",            "type": "string" },
+                            { "name": "cloud_account_id",          "type": "string" },
+                            { "name": "resource_type",             "type": "string" },
+                            { "name": "cloud_resource_id",         "type": "string" },
+                            { "name": "region",                    "type": "string" },
+                            { "name": "protected_by",              "type": "string" },
+                            { "name": "status",                    "type": "string" },
+                            { "name": "tags",                      "type": "dynamic" },
+                            { "name": "network_risk",              "type": "dynamic" },
+                            { "name": "detection_risk",            "type": "dynamic" },
+                            { "name": "vulnerability_risk",        "type": "dynamic" },
+                            { "name": "high_privilege_risk",       "type": "dynamic" },
+                            { "name": "technologies",              "type": "dynamic" },
+                            { "name": "public_ip_addresses",       "type": "dynamic" },
+                            { "name": "private_ip_addresses",      "type": "dynamic" },
+                            { "name": "sensitive_data_at_rest",    "type": "dynamic" },
+                            { "name": "sensitive_data_in_transit", "type": "dynamic" }
                         ]
                     },
                     "Custom-UpwindVulnerabilityFindings_CL": {
@@ -453,7 +452,7 @@
                     {
                         "streams": [ "Custom-UpwindCatalogAssets_CL" ],
                         "destinations": [ "upwindWorkspace" ],
-                        "transformKql": "source",
+                        "transformKql": "source | extend TimeGenerated = now(), AssetId = tostring(id), AssetName = tostring(name), Category = tostring(category), SubCategory = tostring(sub_category), CloudProvider = tostring(cloud_provider), CloudAccountId = tostring(cloud_account_id), ResourceType = tostring(resource_type), CloudResourceId = tostring(cloud_resource_id), Region = tostring(region), ProtectedBy = tostring(protected_by), Status = tostring(status), Tags = tags, NetworkRisk = network_risk, DetectionRisk = detection_risk, VulnerabilityRisk = vulnerability_risk, HighPrivilegeRisk = high_privilege_risk, Technologies = technologies, PublicIpAddresses = public_ip_addresses, PrivateIpAddresses = private_ip_addresses, SensitiveDataAtRest = sensitive_data_at_rest, SensitiveDataInTransit = sensitive_data_in_transit | project TimeGenerated, AssetId, AssetName, Category, SubCategory, CloudProvider, CloudAccountId, ResourceType, CloudResourceId, Region, ProtectedBy, Status, Tags, NetworkRisk, DetectionRisk, VulnerabilityRisk, HighPrivilegeRisk, Technologies, PublicIpAddresses, PrivateIpAddresses, SensitiveDataAtRest, SensitiveDataInTransit",
                         "outputStream": "Custom-UpwindCatalogAssets_CL"
                     },
                     {

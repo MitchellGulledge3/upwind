@@ -187,7 +187,7 @@ class UpwindClient:
         """
 
         token = self._get_access_token()
-        headers = {"Authorization": f"******", "Accept": "application/json"}
+        headers = {"Authorization": "Bearer " + token, "Accept": "application/json"}
 
         all_items = []
         page = 1
@@ -232,7 +232,7 @@ class UpwindClient:
         """
 
         token = self._get_access_token()
-        headers = {"Authorization": f"******", "Accept": "application/json"}
+        headers = {"Authorization": "Bearer " + token, "Accept": "application/json"}
 
         all_items = []
         next_url = url
