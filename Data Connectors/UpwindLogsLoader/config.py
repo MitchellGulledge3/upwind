@@ -27,7 +27,7 @@ class ConfigStore:
 _REQUIRED_CONFIG_KEYS = [
     "azure_dce_endpoint",
     "azure_dcr_immutableid",
-    "azure_stream_name",
+    "azure_stream_name_inventory",
     "upwind_org_id",
     "upwind_client_id",
     "upwind_auth_url",
@@ -79,7 +79,15 @@ def load_configuration() -> ConfigStore:
         azure_client_id=azure_client_id,
         azure_dce_endpoint=os.getenv("DCE_ENDPOINT"),
         azure_dcr_immutableid=os.getenv("DCR_IMMUTABLEID"),
-        azure_stream_name=os.getenv("STREAM_NAME"),
+        # Inventory/catalog keeps the original STREAM_NAME env var as a fallback
+        # so Function Apps deployed before the multi-endpoint update keep working
+        # without needing every new app setting populated immediately.
+        azure_stream_name_inventory=os.getenv("STREAM_NAME_INVENTORY", os.getenv("STREAM_NAME")),
+        azure_stream_name_vulnerability=os.getenv("STREAM_NAME_VULNERABILITY"),
+        azure_stream_name_threat_detections=os.getenv("STREAM_NAME_THREAT_DETECTIONS"),
+        azure_stream_name_threat_events=os.getenv("STREAM_NAME_THREAT_EVENTS"),
+        azure_stream_name_threat_stories=os.getenv("STREAM_NAME_THREAT_STORIES"),
+        azure_stream_name_config_findings=os.getenv("STREAM_NAME_CONFIG_FINDINGS"),
         upwind_org_id=os.getenv("UPWIND_ORG_ID"),
         upwind_client_id=os.getenv("UPWIND_CLIENT_ID"),
         upwind_client_secret=upwind_client_secret,
@@ -89,6 +97,7 @@ def load_configuration() -> ConfigStore:
         upwind_max_retries=_parse_int_env("UPWIND_MAX_RETRIES", "5"),
         upwind_initial_backoff_seconds=_parse_int_env("UPWIND_INITIAL_BACKOFF_SECONDS", "1"),
         upwind_max_backoff_seconds=_parse_int_env("UPWIND_MAX_BACKOFF_SECONDS", "60"),
+        upwind_threat_lookback_minutes=_parse_int_env("UPWIND_THREAT_LOOKBACK_MINUTES", "90"),
     )
 
     # Validate required config

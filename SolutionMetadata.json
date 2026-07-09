@@ -2,8 +2,8 @@
     "publisherId": "upwind",
     "offerId": "upwind-catalog-loader",
     "firstPublishDate": "2025-01-01",
-    "lastPublishDate": "2025-01-01",
-    "version": "1.0.0",
+    "lastPublishDate": "2026-07-09",
+    "version": "1.1.0",
     "providers": ["Upwind"],
     "categories": {
         "domain": ["Cloud Security", "IT Operations"],
@@ -16,6 +16,6 @@
         "link": "https://upwind.io"
     },
     "title": "Upwind Catalog Loader",
-    "description": "Ingests compute platform assets from the Upwind cloud security platform into Microsoft Sentinel using an Azure Function and the Azure Monitor Ingestion API.",
+    "description": "Ingests inventory/catalog assets, vulnerability findings, threat detections, threat events, threat stories, and configuration findings from the Upwind cloud security platform into Microsoft Sentinel using an Azure Function and the Azure Monitor Ingestion API.",
     "logo": "Logo.svg"
 }

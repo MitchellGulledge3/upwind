@@ -100,6 +100,13 @@
             "metadata": {
                 "description": "CRON expression for the Function App timer trigger (default: top of every hour)."
             }
+        },
+        "UpwindThreatLookbackMinutes": {
+            "type": "int",
+            "defaultValue": 90,
+            "metadata": {
+                "description": "How far back (in minutes) each run queries for threat detections, threat events, threat stories, and configuration findings. Should comfortably exceed the interval implied by UpwindCatalogSchedule so nothing is missed between runs; overlap just produces harmless duplicate rows. Inventory assets and vulnerability findings are always full current-state syncs and are not affected by this setting."
+            }
         }
     },
     "variables": {
@@ -109,7 +116,17 @@
         "mainRuleName": "[concat('upwind-dcr-', uniqueString(resourceGroup().id))]",
         "tableName": "UpwindCatalogAssets_CL",
         "streamName": "Custom-UpwindCatalogAssets_CL",
-        "tableDeploymentName": "[concat('deploy-', variables('tableName'), '-table')]",
+        "tableNameVulnerability": "UpwindVulnerabilityFindings_CL",
+        "streamNameVulnerability": "Custom-UpwindVulnerabilityFindings_CL",
+        "tableNameThreatDetections": "UpwindThreatDetections_CL",
+        "streamNameThreatDetections": "Custom-UpwindThreatDetections_CL",
+        "tableNameThreatEvents": "UpwindThreatEvents_CL",
+        "streamNameThreatEvents": "Custom-UpwindThreatEvents_CL",
+        "tableNameThreatStories": "UpwindThreatStories_CL",
+        "streamNameThreatStories": "Custom-UpwindThreatStories_CL",
+        "tableNameConfigFindings": "UpwindConfigurationFindings_CL",
+        "streamNameConfigFindings": "Custom-UpwindConfigurationFindings_CL",
+        "tableDeploymentName": "[concat('deploy-upwind-tables-', uniqueString(resourceGroup().id))]",
         "logWsResId": "[resourceId(parameters('WorkspaceResourceGroup'), 'Microsoft.OperationalInsights/workspaces', parameters('WorkspaceName'))]",
         "monitoringMetricsPublisherRoleId": "3913510d-42f4-4e42-8a64-420c390055eb"
     },
@@ -172,6 +189,130 @@
                                     ]
                                 }
                             }
+                        },
+                        {
+                            "type": "Microsoft.OperationalInsights/workspaces/tables",
+                            "apiVersion": "2022-10-01",
+                            "name": "[concat(parameters('WorkspaceName'), '/', variables('tableNameVulnerability'))]",
+                            "properties": {
+                                "schema": {
+                                    "name": "[variables('tableNameVulnerability')]",
+                                    "columns": [
+                                        { "name": "TimeGenerated",      "type": "datetime" },
+                                        { "name": "id",                 "type": "string" },
+                                        { "name": "cve_id",             "type": "string" },
+                                        { "name": "severity",           "type": "string" },
+                                        { "name": "status",             "type": "string" },
+                                        { "name": "first_seen_time",    "type": "datetime" },
+                                        { "name": "last_scan_time",     "type": "datetime" },
+                                        { "name": "resource",           "type": "dynamic" },
+                                        { "name": "package",            "type": "dynamic" },
+                                        { "name": "fix",                "type": "dynamic" },
+                                        { "name": "fix_available",      "type": "string" },
+                                        { "name": "exploitable",        "type": "string" },
+                                        { "name": "internet_exposure",  "type": "string" },
+                                        { "name": "source",             "type": "string" },
+                                        { "name": "image_name",         "type": "string" },
+                                        { "name": "remediation",        "type": "dynamic" }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.OperationalInsights/workspaces/tables",
+                            "apiVersion": "2022-10-01",
+                            "name": "[concat(parameters('WorkspaceName'), '/', variables('tableNameThreatDetections'))]",
+                            "properties": {
+                                "schema": {
+                                    "name": "[variables('tableNameThreatDetections')]",
+                                    "columns": [
+                                        { "name": "TimeGenerated",       "type": "datetime" },
+                                        { "name": "id",                  "type": "string" },
+                                        { "name": "title_text",               "type": "string" },
+                                        { "name": "description",         "type": "string" },
+                                        { "name": "category",            "type": "string" },
+                                        { "name": "event_type",                "type": "string" },
+                                        { "name": "severity",            "type": "string" },
+                                        { "name": "status",              "type": "string" },
+                                        { "name": "first_seen_time",     "type": "datetime" },
+                                        { "name": "last_seen_time",      "type": "datetime" },
+                                        { "name": "occurrence_count",    "type": "long" },
+                                        { "name": "resource",            "type": "dynamic" },
+                                        { "name": "mitre_attacks",       "type": "dynamic" },
+                                        { "name": "triggers",            "type": "dynamic" }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.OperationalInsights/workspaces/tables",
+                            "apiVersion": "2022-10-01",
+                            "name": "[concat(parameters('WorkspaceName'), '/', variables('tableNameThreatEvents'))]",
+                            "properties": {
+                                "schema": {
+                                    "name": "[variables('tableNameThreatEvents')]",
+                                    "columns": [
+                                        { "name": "TimeGenerated",    "type": "datetime" },
+                                        { "name": "id",               "type": "string" },
+                                        { "name": "title_text",            "type": "string" },
+                                        { "name": "category",         "type": "string" },
+                                        { "name": "event_type",             "type": "string" },
+                                        { "name": "severity",         "type": "string" },
+                                        { "name": "status",           "type": "string" },
+                                        { "name": "first_seen_time",  "type": "datetime" },
+                                        { "name": "last_seen_time",   "type": "datetime" },
+                                        { "name": "resource",         "type": "dynamic" },
+                                        { "name": "raw",              "type": "dynamic" }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.OperationalInsights/workspaces/tables",
+                            "apiVersion": "2022-10-01",
+                            "name": "[concat(parameters('WorkspaceName'), '/', variables('tableNameThreatStories'))]",
+                            "properties": {
+                                "schema": {
+                                    "name": "[variables('tableNameThreatStories')]",
+                                    "columns": [
+                                        { "name": "TimeGenerated",     "type": "datetime" },
+                                        { "name": "id",                "type": "string" },
+                                        { "name": "title_text",             "type": "string" },
+                                        { "name": "status",            "type": "string" },
+                                        { "name": "severity",          "type": "string" },
+                                        { "name": "create_time",       "type": "datetime" },
+                                        { "name": "update_time",       "type": "datetime" },
+                                        { "name": "primary_resource",  "type": "dynamic" },
+                                        { "name": "summary",           "type": "string" },
+                                        { "name": "detection_ids",     "type": "dynamic" },
+                                        { "name": "event_ids",         "type": "dynamic" },
+                                        { "name": "risk_factors",      "type": "dynamic" }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.OperationalInsights/workspaces/tables",
+                            "apiVersion": "2022-10-01",
+                            "name": "[concat(parameters('WorkspaceName'), '/', variables('tableNameConfigFindings'))]",
+                            "properties": {
+                                "schema": {
+                                    "name": "[variables('tableNameConfigFindings')]",
+                                    "columns": [
+                                        { "name": "TimeGenerated",     "type": "datetime" },
+                                        { "name": "id",                "type": "string" },
+                                        { "name": "title_text",             "type": "string" },
+                                        { "name": "status",            "type": "string" },
+                                        { "name": "severity",          "type": "string" },
+                                        { "name": "first_seen_time",   "type": "datetime" },
+                                        { "name": "evaluation_time",   "type": "datetime" },
+                                        { "name": "framework",         "type": "dynamic" },
+                                        { "name": "rule",              "type": "dynamic" },
+                                        { "name": "resource",          "type": "dynamic" },
+                                        { "name": "risk_categories",   "type": "dynamic" }
+                                    ]
+                                }
+                            }
                         }
                     ]
                 }
@@ -214,6 +355,90 @@
                             { "name": "SensitiveDataAtRest",    "type": "dynamic" },
                             { "name": "SensitiveDataInTransit", "type": "dynamic" }
                         ]
+                    },
+                    "Custom-UpwindVulnerabilityFindings_CL": {
+                        "columns": [
+                            { "name": "TimeGenerated",      "type": "datetime" },
+                            { "name": "id",                 "type": "string" },
+                            { "name": "cve_id",             "type": "string" },
+                            { "name": "severity",           "type": "string" },
+                            { "name": "status",             "type": "string" },
+                            { "name": "first_seen_time",    "type": "datetime" },
+                            { "name": "last_scan_time",     "type": "datetime" },
+                            { "name": "resource",           "type": "dynamic" },
+                            { "name": "package",            "type": "dynamic" },
+                            { "name": "fix",                "type": "dynamic" },
+                            { "name": "fix_available",      "type": "string" },
+                            { "name": "exploitable",        "type": "string" },
+                            { "name": "internet_exposure",  "type": "string" },
+                            { "name": "source",             "type": "string" },
+                            { "name": "image_name",         "type": "string" },
+                            { "name": "remediation",        "type": "dynamic" }
+                        ]
+                    },
+                    "Custom-UpwindThreatDetections_CL": {
+                        "columns": [
+                            { "name": "TimeGenerated",       "type": "datetime" },
+                            { "name": "id",                  "type": "string" },
+                            { "name": "title_text",               "type": "string" },
+                            { "name": "description",         "type": "string" },
+                            { "name": "category",            "type": "string" },
+                            { "name": "event_type",                "type": "string" },
+                            { "name": "severity",            "type": "string" },
+                            { "name": "status",              "type": "string" },
+                            { "name": "first_seen_time",     "type": "datetime" },
+                            { "name": "last_seen_time",      "type": "datetime" },
+                            { "name": "occurrence_count",    "type": "long" },
+                            { "name": "resource",            "type": "dynamic" },
+                            { "name": "mitre_attacks",       "type": "dynamic" },
+                            { "name": "triggers",            "type": "dynamic" }
+                        ]
+                    },
+                    "Custom-UpwindThreatEvents_CL": {
+                        "columns": [
+                            { "name": "TimeGenerated",    "type": "datetime" },
+                            { "name": "id",               "type": "string" },
+                            { "name": "title_text",            "type": "string" },
+                            { "name": "category",         "type": "string" },
+                            { "name": "event_type",             "type": "string" },
+                            { "name": "severity",         "type": "string" },
+                            { "name": "status",           "type": "string" },
+                            { "name": "first_seen_time",  "type": "datetime" },
+                            { "name": "last_seen_time",   "type": "datetime" },
+                            { "name": "resource",         "type": "dynamic" },
+                            { "name": "raw",              "type": "dynamic" }
+                        ]
+                    },
+                    "Custom-UpwindThreatStories_CL": {
+                        "columns": [
+                            { "name": "TimeGenerated",     "type": "datetime" },
+                            { "name": "id",                "type": "string" },
+                            { "name": "title_text",             "type": "string" },
+                            { "name": "status",            "type": "string" },
+                            { "name": "severity",          "type": "string" },
+                            { "name": "create_time",       "type": "datetime" },
+                            { "name": "update_time",       "type": "datetime" },
+                            { "name": "primary_resource",  "type": "dynamic" },
+                            { "name": "summary",           "type": "string" },
+                            { "name": "detection_ids",     "type": "dynamic" },
+                            { "name": "event_ids",         "type": "dynamic" },
+                            { "name": "risk_factors",      "type": "dynamic" }
+                        ]
+                    },
+                    "Custom-UpwindConfigurationFindings_CL": {
+                        "columns": [
+                            { "name": "TimeGenerated",     "type": "datetime" },
+                            { "name": "id",                "type": "string" },
+                            { "name": "title_text",             "type": "string" },
+                            { "name": "status",            "type": "string" },
+                            { "name": "severity",          "type": "string" },
+                            { "name": "first_seen_time",   "type": "datetime" },
+                            { "name": "evaluation_time",   "type": "datetime" },
+                            { "name": "framework",         "type": "dynamic" },
+                            { "name": "rule",              "type": "dynamic" },
+                            { "name": "resource",          "type": "dynamic" },
+                            { "name": "risk_categories",   "type": "dynamic" }
+                        ]
                     }
                 },
                 "destinations": {
@@ -230,6 +455,36 @@
                         "destinations": [ "upwindWorkspace" ],
                         "transformKql": "source",
                         "outputStream": "Custom-UpwindCatalogAssets_CL"
+                    },
+                    {
+                        "streams": [ "Custom-UpwindVulnerabilityFindings_CL" ],
+                        "destinations": [ "upwindWorkspace" ],
+                        "transformKql": "source | extend TimeGenerated = now()",
+                        "outputStream": "Custom-UpwindVulnerabilityFindings_CL"
+                    },
+                    {
+                        "streams": [ "Custom-UpwindThreatDetections_CL" ],
+                        "destinations": [ "upwindWorkspace" ],
+                        "transformKql": "source | extend TimeGenerated = now()",
+                        "outputStream": "Custom-UpwindThreatDetections_CL"
+                    },
+                    {
+                        "streams": [ "Custom-UpwindThreatEvents_CL" ],
+                        "destinations": [ "upwindWorkspace" ],
+                        "transformKql": "source | extend TimeGenerated = now()",
+                        "outputStream": "Custom-UpwindThreatEvents_CL"
+                    },
+                    {
+                        "streams": [ "Custom-UpwindThreatStories_CL" ],
+                        "destinations": [ "upwindWorkspace" ],
+                        "transformKql": "source | extend TimeGenerated = now()",
+                        "outputStream": "Custom-UpwindThreatStories_CL"
+                    },
+                    {
+                        "streams": [ "Custom-UpwindConfigurationFindings_CL" ],
+                        "destinations": [ "upwindWorkspace" ],
+                        "transformKql": "source | extend TimeGenerated = now()",
+                        "outputStream": "Custom-UpwindConfigurationFindings_CL"
                     }
                 ]
             }
@@ -389,8 +644,28 @@
                             "value": "[reference(resourceId('Microsoft.Insights/dataCollectionRules', variables('mainRuleName')), '2021-09-01-preview').immutableId]"
                         },
                         {
-                            "name": "STREAM_NAME",
+                            "name": "STREAM_NAME_INVENTORY",
                             "value": "[variables('streamName')]"
+                        },
+                        {
+                            "name": "STREAM_NAME_VULNERABILITY",
+                            "value": "[variables('streamNameVulnerability')]"
+                        },
+                        {
+                            "name": "STREAM_NAME_THREAT_DETECTIONS",
+                            "value": "[variables('streamNameThreatDetections')]"
+                        },
+                        {
+                            "name": "STREAM_NAME_THREAT_EVENTS",
+                            "value": "[variables('streamNameThreatEvents')]"
+                        },
+                        {
+                            "name": "STREAM_NAME_THREAT_STORIES",
+                            "value": "[variables('streamNameThreatStories')]"
+                        },
+                        {
+                            "name": "STREAM_NAME_CONFIG_FINDINGS",
+                            "value": "[variables('streamNameConfigFindings')]"
                         },
                         {
                             "name": "UPWIND_ORG_ID",
@@ -429,12 +704,16 @@
                             "value": "[string(parameters('UpwindMaxBackoffSeconds'))]"
                         },
                         {
+                            "name": "UPWIND_THREAT_LOOKBACK_MINUTES",
+                            "value": "[string(parameters('UpwindThreatLookbackMinutes'))]"
+                        },
+                        {
                             "name": "UPWIND_CATALOG_SCHEDULE",
                             "value": "[parameters('UpwindCatalogSchedule')]"
                         },
                         {
                             "name": "WEBSITE_RUN_FROM_PACKAGE",
-                            "value": "https://github.com/MitchellGulledge3/upwind/releases/download/v1.0.0/UpwindCatalogLoader.zip"
+                            "value": "https://github.com/MitchellGulledge3/upwind/releases/download/v1.1.0/UpwindCatalogLoader.zip"
                         }
                     ],
                     "linuxFxVersion": "Python|3.11",
