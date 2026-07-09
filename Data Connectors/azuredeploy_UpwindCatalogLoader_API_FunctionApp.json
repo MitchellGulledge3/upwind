@@ -321,6 +321,7 @@
             "kind": "functionapp",
             "properties": {
                 "name": "[variables('FunctionName')]",
+                "reserved": true,
                 "workerSize": "0",
                 "workerSizeId": "0",
                 "numberOfWorkers": "1"
