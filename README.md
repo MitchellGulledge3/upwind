@@ -41,13 +41,14 @@ UpwindCatalogLoader/
 
 Click the button below to deploy all required Azure resources (DCE, custom table, DCR, role assignment, storage, App Insights, Function App) in one step:
 
-[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMitchellGulledge3%2Fupwind%2Fmain%2FUpwindCatalogLoader%2FData%2520Connectors%2Fazuredeploy_UpwindCatalogLoader_API_FunctionApp.json)
+[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMitchellGulledge3%2Fupwind%2Fmain%2FData%2520Connectors%2Fazuredeploy_UpwindCatalogLoader_API_FunctionApp.json)
 
 ### Parameters
 
 | Parameter | Description |
 |---|---|
 | `WorkspaceName` | Name of your Log Analytics / Sentinel workspace |
+| `WorkspaceResourceGroup` | *(optional)* Resource group containing that workspace. Defaults to the resource group you're deploying into. Set this if your workspace lives in a **different** resource group than the one you want these new resources (Function App, storage, DCE/DCR) created in — this template supports that split. Requires write permission on both resource groups. |
 | `UpwindOrgId` | Upwind Organization ID (Settings → Organization) |
 | `UpwindClientId` | Upwind API Client ID (Settings → API Keys) |
 | `UpwindClientSecret` | Upwind API Client Secret |
