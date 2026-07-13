@@ -45,7 +45,7 @@ def _parse_int_env(name: str, default: str) -> int:
 def _resolve_upwind_secret(azure_client_id, key_vault_uri, secret_name):
     """Retrieve Upwind client secret from Key Vault (preferred) or env var (fallback)."""
 
-    if key_vault_uri and secret_name and azure_client_id:
+    if key_vault_uri and secret_name:
         try:
             credential = ManagedIdentityCredential(client_id=azure_client_id)
             secret_client = SecretClient(vault_url=key_vault_uri, credential=credential)

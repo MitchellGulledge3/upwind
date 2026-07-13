@@ -2,8 +2,8 @@
   "publisherId": "upwind",
   "offerId": "upwind-catalog-loader",
   "firstPublishDate": "2025-01-01",
-  "lastPublishDate": "2026-07-09",
-  "version": "1.1.1",
+  "lastPublishDate": "2026-07-13",
+  "version": "1.1.2",
   "providers": [
     "Upwind"
   ],

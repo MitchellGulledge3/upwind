@@ -1,5 +1,10 @@
 # Release Notes — Upwind Catalog Loader
 
+## v1.1.2
+
+### Fixes
+- **Removed the `AzureClientObjectId` parameter — no manual Object ID pasting required.** The Function App now uses a **system-assigned managed identity**, created automatically at deploy time. The template grants it Monitoring Metrics Publisher on the DCR directly via `reference(...).identity.principalId` — no parameter to fill in, nothing to look up. This also fixes a latent deployment gap: the template previously had **no identity block on the Function App at all**, so even a correctly-supplied Object ID would pass the role assignment but the app itself would have no managed identity to actually authenticate with at runtime (`ManagedIdentityCredential` would fail with no identity attached to the compute). Also fixed: the Key Vault secret-resolution path no longer requires a client ID to attempt Key Vault access (system-assigned identities don't need one).
+
 ## v1.1.1
 
 ### Fixes
