@@ -1,5 +1,7 @@
 # Upwind Sentinel Connector
 
+[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMitchellGulledge3%2Fupwind%2Fmain%2FData%2520Connectors%2Fazuredeploy_UpwindCatalogLoader_API_FunctionApp.json)
+
 Microsoft Sentinel data connector that ingests data from **six Upwind API endpoints** — inventory/catalog assets (all categories), vulnerability findings, threat detections, threat events, threat stories, and configuration (posture) findings — from the [Upwind](https://upwind.io) cloud security platform into six custom Log Analytics tables, using an Azure Function and the [Azure Monitor Ingestion API](https://learn.microsoft.com/azure/azure-monitor/logs/logs-ingestion-api-overview) (DCE/DCR).
 
 ## What it does
